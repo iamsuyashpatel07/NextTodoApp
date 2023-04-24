@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import React from 'react';
+import { LogoutBtn } from '../components/Clients';
 
 const Header = () => {
   return (
@@ -14,7 +15,7 @@ const Header = () => {
         <Link href={'/about'}>About</Link>
       </article>
       <article>
-        <Link href={'/login'}>Login</Link>
+        <LogoutBtn />
       </article>
     </div>
   );
