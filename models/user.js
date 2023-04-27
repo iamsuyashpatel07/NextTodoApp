@@ -1,12 +1,12 @@
 import mongoose from 'mongoose';
 
-const schema = new mongoose.schema({
+const schema = new mongoose.Schema({
   name: {
-    name: String,
+    type: String,
     required: true,
   },
   email: {
-    name: String,
+    type: String,
     unique: true,
     required: true,
   },
