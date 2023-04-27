@@ -4,6 +4,7 @@ import {
   cookieSetter,
   generateToken,
 } from '../../../utils/features';
+import bcrypt from 'bcrypt';
 
 const { asyncError, errorHandler } = require('../../../middlewares/error');
 
@@ -24,10 +25,12 @@ const handler = asyncError(async (req, res) => {
   if (user) {
     return errorHandler(res, 400, 'User registered with this email');
   }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
   user = await User.create({
     name,
     email,
-    password,
+    password: hashedPassword,
   });
 
   const token = generateToken(user._id);
