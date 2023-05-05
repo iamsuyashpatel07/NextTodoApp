@@ -1,6 +1,9 @@
 'use client';
 import Link from 'next/link';
-import React from 'react';
+import React, { useContext, useState } from 'react';
+import { Context } from '../../components/Clients';
+import { redirect } from 'next/navigation';
+import { toast } from 'react-hot-toast';
 
 export const metadata = {
   title: 'Login',
@@ -8,12 +11,52 @@ export const metadata = {
 };
 
 const page = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const { user, setUser } = useContext(Context);
+
+  const loginhandler = async e => {
+    e.preventDefault();
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await res.json();
+      if (!data.success) return toast.error(data.message);
+      setUser(data.user);
+      toast.success(data.message);
+    } catch (error) {
+      return toast.error(data.message);
+    }
+  };
+  if (user._id) return redirect('/');
+
   return (
     <div className='login'>
       <section>
-        <form>
-          <input type='email' placeholder='Enter email' />
-          <input type='password' placeholder='Enter Password' />
+        <form onSubmit={loginhandler}>
+          <input
+            type='email'
+            placeholder='Enter email'
+            value={email}
+            onChange={e => {
+              setEmail(e.target.value);
+            }}
+          />
+          <input
+            type='password'
+            placeholder='Enter Password'
+            value={password}
+            onChange={e => {
+              setPassword(e.target.value);
+            }}
+          />
 
           <button type='submit'>Login</button>
           <p>OR</p>
