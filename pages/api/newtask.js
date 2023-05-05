@@ -1,6 +1,6 @@
-import { asyncError } from '../../middlewares/error';
+import { asyncError, errorHandler } from '../../middlewares/error';
 import { Task } from '../../models/task';
-import { connectDB } from '../../utils/features';
+import { checkAuth, connectDB } from '../../utils/features';
 
 const handler = asyncError(async (req, res) => {
   await connectDB();
@@ -10,11 +10,19 @@ const handler = asyncError(async (req, res) => {
   }
   const { title, description } = req.body;
 
+  if (!title || !description) {
+    return errorHandler(res, 400, 'Please Enter All Field');
+  }
+
+  const user = await checkAuth(req);
+
+  if (!user) return errorHandler(res, 401, 'Login First');
+
   await Task.create({
     title,
     description,
     // isCompleted: false,
-    user: 'SomeOneghjdsk',
+    user: user._id,
   });
 
   res.json({
